@@ -130,12 +130,12 @@ git clone https://github.com/nimaPhuntsho/auth.git
 
 ### Install dependencies for both frontend and backend:
 
-# Install backend dependencies
+## Install backend dependencies
 
 cd api
 npm install
 
-# Install frontend dependencies
+## Install frontend dependencies
 
 cd web
 npm install
