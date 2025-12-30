@@ -112,6 +112,39 @@ The trade-offs (scaling Redis, stateful backend) are acknowledged and discussed.
 
 - Session cookie is cleared from the browser
 
+## Prerequisites
+
+Make sure you have the following installed:
+
+- Node.js
+  (v18+ recommended)
+
+- npm
+  or yarn
+
+## Installation
+
+### Clone repo
+
+git clone https://github.com/nimaPhuntsho/auth.git
+
+### Install dependencies for both frontend and backend:
+
+# Install backend dependencies
+
+cd api
+npm install
+
+# Install frontend dependencies
+
+cd web
+npm install
+
+## Environment Variables
+
+NEXT_PUBLIC_SUPABASE_URL=YOUR SUPABASE URL
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY=YOUR ENON KEY
+
 ## Disclaimer
 
 This project is built for learning and demonstration purposes. In production systems, managed auth solutions or additional hardening would be recommended.
