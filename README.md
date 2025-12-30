@@ -6,6 +6,42 @@ This project is a custom session-based authentication system built to understand
 
 The goal of the project is educational and architectural: to explore authentication trade-offs, session lifecycle management, and real-world backend concerns such as security, scalability, and correctness.
 
+## Why Session-Based Auth?
+
+This project intentionally uses sessions instead of JWT-only auth to explore:
+
+- Immediate server-side revocation
+
+- Secure logout semantics
+
+- Reduced token leakage risk
+
+- Centralized session control
+
+The trade-offs (scaling Redis, stateful backend) are acknowledged and discussed.
+
+## What I Learned
+
+- How authentication works beyond SDKs
+
+- Why database constraints matter more than frontend validation
+
+- How Redis is used in real production systems
+
+- Common auth edge cases (duplicate users, stale sessions)
+
+- Security implications of cookies and session handling
+
+## Limitations & Future Improvements
+
+- Redis as a single point of failure
+
+- No refresh-session rotation
+
+- No rate limiting on auth endpoints
+
+- No multi-device session management
+
 ## Tech Stack
 
 ### Backend
@@ -26,18 +62,56 @@ The goal of the project is educational and architectural: to explore authenticat
 
 - Database constraints (UNIQUE, NOT NULL)
 
-# Project layout
+## Architecture Overview
 
-/api -> Express server (src, services)
+1. The frontend (Next.js) sends authentication requests to the Express API.
 
-/web -> NextJS app (app, components)
+2. The API validates credentials against Supabase Postgres.
 
-# API endpoints (summary)
+3. On successful login:
 
-[POST] /api/v1/login – Validate user and set sid cookie
+- A session ID (SID) is generated
 
-[POST] /api/v1/logout – Destory the session
+- Session data is stored in Redis under session:<sid>
 
-[GET] /api/v1/session – Returns the current sid or 401
+- The SID is sent back as an HTTP-only cookie
 
-[POST] /api/v1/register – Creates a new user
+4. Subsequent requests authenticate using the session cookie.
+
+5. Logout deletes the Redis session and clears the cookie.
+
+## Authentication Flow
+
+### Signup
+
+- User submits name, email, and password
+
+- Password is hashed before storage
+
+- Email is enforced as UNIQUE at the database level
+
+- On duplicate email, PostgreSQL raises error code 23505
+
+### Login
+
+- Credentials are verified against the database
+
+- A server-side session is created in Redis
+
+- Session ID is returned as an HTTP-only cookie
+
+### Session Validation
+
+- Each protected request checks for a valid session ID
+
+- Redis is queried to confirm session existence
+
+### Logout
+
+- Redis session is deleted
+
+- Session cookie is cleared from the browser
+
+## Disclaimer
+
+This project is built for learning and demonstration purposes. In production systems, managed auth solutions or additional hardening would be recommended.
