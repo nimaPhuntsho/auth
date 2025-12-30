@@ -15,7 +15,7 @@ const FIELDS = [
 ];
 
 const RegisterForm = () => {
-  const [localError, setLocalError] = useState("");
+  const [localError, setLocalError] = useState<string | null>();
   const {
     register,
     handleSubmit,
@@ -34,6 +34,7 @@ const RegisterForm = () => {
 
   const router = useRouter();
   const submitHandler: SubmitHandler<RegisterType> = async (data) => {
+    setLocalError(null);
     if (data.password !== data.confirmPassword) {
       setLocalError("Password did not match");
       return;

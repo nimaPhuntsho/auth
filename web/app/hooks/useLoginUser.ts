@@ -8,6 +8,7 @@ export const useLoginUser = () => {
 
   const loginUser = async (data: { email: string; password: string }) => {
     setLoading(true);
+    setError(null);
     try {
       const response = await customFetch({
         method: "POST",
