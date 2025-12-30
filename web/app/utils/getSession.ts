@@ -12,7 +12,5 @@ export async function getSession() {
     method: "GET",
     schema: ResponseSessionSchema,
   });
-  // console.log(response);
-
   return response;
 }

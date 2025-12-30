@@ -1,16 +1,21 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
-import {
-  RegisterResponseSchema,
-  RegisterSchema,
-  RegisterType,
-} from "../register/schema";
+import { RegisterSchema, RegisterType } from "../register/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { customFetch } from "../utils/customFetch";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useRegisterUser } from "../hooks/useRegisterUser";
+
+const FIELDS = [
+  { key: "name", label: "Name" },
+  { key: "email", label: "Email" },
+  { key: "password", label: "Password" },
+  { key: "confirmPassword", label: "Confirm Password" },
+];
 
 const RegisterForm = () => {
+  const [localError, setLocalError] = useState("");
   const {
     register,
     handleSubmit,
@@ -25,53 +30,16 @@ const RegisterForm = () => {
     resolver: zodResolver(RegisterSchema),
   });
 
-  const [loginState, setLoginState] = useState<{
-    errorMessage: string | null;
-    error: boolean;
-    loading: boolean;
-  }>({
-    errorMessage: "",
-    loading: false,
-    error: false,
-  });
+  const { registerUser, loading, error } = useRegisterUser();
 
-  const equalStrings = (first: string, second: string) => {
-    if (first !== second) throw new Error("strings are not equal");
-    return true;
-  };
-
+  const router = useRouter();
   const submitHandler: SubmitHandler<RegisterType> = async (data) => {
-    try {
-      setLoginState((state) => ({ ...state, loading: true, errorMessage: "" }));
-      if (!equalStrings(data.password, data.confirmPassword)) {
-        setLoginState((state) => ({
-          ...state,
-          errorMessage: "Passwords did not match",
-        }));
-        setLoginState((state) => ({ ...state, loading: false }));
-        return;
-      }
-      const response = await customFetch({
-        method: "POST",
-        endpoint: "http://localhost:3002/api/v1/register",
-        body: {
-          email: data.email,
-          name: data.name,
-          password: data.password,
-        },
-        schema: RegisterResponseSchema,
-      });
-      if (response.error !== null) {
-        setLoginState((state) => ({
-          ...state,
-          error: true,
-          errorMessage: response.error,
-        }));
-      }
-      setLoginState((state) => ({ ...state, loading: false }));
-    } catch (error) {
-      console.log(error instanceof Error && error.message);
+    if (data.password !== data.confirmPassword) {
+      setLocalError("Password did not match");
+      return;
     }
+    const userId = await registerUser(data);
+    if (userId) router.push(`users/${userId}`);
   };
 
   return (
@@ -84,62 +52,35 @@ const RegisterForm = () => {
             className="flex flex-col gap-2"
             action=""
           >
-            <div className="flex flex-col">
-              <label htmlFor="">Name</label>
-              <input
-                {...register("name")}
-                type="text"
-                className="border border-[#A2D5C6] p-2 rounded-sm"
-              />
-              <p className="text-[#ff6666]">
-                {errors.name && errors.name.message}
-              </p>
-            </div>
-            <div className="flex flex-col">
-              <label htmlFor="">Email</label>
-              <input
-                {...register("email")}
-                type="text"
-                className="border border-[#A2D5C6] p-2 rounded-sm"
-              />
-              <p className="text-[#ff6666]">
-                {errors.email && errors.email.message}
-              </p>
-            </div>
-            <div className="flex flex-col">
-              <label htmlFor="">Password</label>
-              <input
-                {...register("password")}
-                type="password"
-                className="border border-[#A2D5C6] p-2 rounded-sm"
-              />
-              <p className="text-[#ff6666]">
-                {errors.password && errors.password.message}
-              </p>
-            </div>
-            <div className="flex flex-col">
-              <label htmlFor="">Confirm Password</label>
-              <input
-                {...register("confirmPassword")}
-                type="password"
-                className="border border-[#A2D5C6] p-2 rounded-sm"
-              />
-              <p className="text-[#ff6666]">
-                {errors.confirmPassword && errors.confirmPassword.message}
-              </p>
-            </div>
+            {FIELDS.map((field) => (
+              <div key={field.key} className="flex flex-col">
+                <label htmlFor={field.key}> {field.label} </label>
+                <input
+                  id={field.key}
+                  {...register(`${field.key as keyof RegisterType}`)}
+                  type={`${
+                    field.key.includes(`${"password"}`) ||
+                    field.key.includes("confirmPassword")
+                      ? "password"
+                      : "text"
+                  }`}
+                  className="border border-[#A2D5C6] p-2 rounded-sm"
+                />
+                <p className="text-[#ff6666]">
+                  {errors[`${field.key as keyof RegisterType}`] &&
+                    errors[`${field.key as keyof RegisterType}`]?.message}
+                </p>
+              </div>
+            ))}
+            <p className="text-[#ff6666]">{localError} </p>
             <button
-              disabled={loginState.loading}
+              disabled={loading}
               type="submit"
               className="border border-[#A2D5C6] active:bg-amber-100 p-2 rounded-md"
             >
-              {loginState.loading
-                ? "Creating now, please wait ..."
-                : "Create now"}
+              {loading ? "Creating now, please wait ..." : "Create now"}
             </button>
-            <p className="text-[#ff6666]">
-              {loginState.error && loginState.errorMessage}
-            </p>
+            <p className="text-[#ff6666]">{error}</p>
           </form>
           <Link href="/login">
             <p>Already have account?</p>

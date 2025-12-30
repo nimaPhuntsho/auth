@@ -11,15 +11,14 @@ interface Props {
 
 export default async function User({ params }: Props) {
   const { id } = await params;
-  if (!id || isNaN(parseInt(id))) redirect("/");
   const session = await getSession();
   if (!session.session) return notFound();
-  const userId = session.session.user.id;
+
   const supabase = await createClient();
   const { data, error } = await supabase
-    .from("auth_users")
+    .from("users")
     .select("*")
-    .eq("id", userId)
+    .eq("user_id", id)
     .single();
 
   if (error) return notFound();

@@ -7,166 +7,33 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "12.2.3 (519615d)"
+    PostgrestVersion: "14.1"
   }
   public: {
     Tables: {
-      auth_users: {
-        Row: {
-          created_at: string
-          email: string
-          id: string
-          name: string
-          password: string
-        }
-        Insert: {
-          created_at?: string
-          email: string
-          id?: string
-          name: string
-          password: string
-        }
-        Update: {
-          created_at?: string
-          email?: string
-          id?: string
-          name?: string
-          password?: string
-        }
-        Relationships: []
-      }
-      contacts: {
-        Row: {
-          created_at: string | null
-          email: string | null
-          full_name: string | null
-          message: string | null
-          message_id: string
-          phone: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          email?: string | null
-          full_name?: string | null
-          message?: string | null
-          message_id?: string
-          phone?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          email?: string | null
-          full_name?: string | null
-          message?: string | null
-          message_id?: string
-          phone?: string | null
-        }
-        Relationships: []
-      }
-      order_items: {
-        Row: {
-          created_at: string | null
-          order_id: number
-          price: number
-          product_id: number
-          quantity: number
-          total: number
-        }
-        Insert: {
-          created_at?: string | null
-          order_id: number
-          price: number
-          product_id: number
-          quantity: number
-          total: number
-        }
-        Update: {
-          created_at?: string | null
-          order_id?: number
-          price?: number
-          product_id?: number
-          quantity?: number
-          total?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "order_items_order_id_fkey"
-            columns: ["order_id"]
-            isOneToOne: false
-            referencedRelation: "orders"
-            referencedColumns: ["order_id"]
-          },
-        ]
-      }
-      orders: {
-        Row: {
-          created_at: string | null
-          order_id: number
-          user_id: string
-        }
-        Insert: {
-          created_at?: string | null
-          order_id?: number
-          user_id: string
-        }
-        Update: {
-          created_at?: string | null
-          order_id?: number
-          user_id?: string
-        }
-        Relationships: []
-      }
-      sessions: {
-        Row: {
-          created_at: string
-          expires_at: string | null
-          id: string
-          user_id: string | null
-        }
-        Insert: {
-          created_at?: string
-          expires_at?: string | null
-          id?: string
-          user_id?: string | null
-        }
-        Update: {
-          created_at?: string
-          expires_at?: string | null
-          id?: string
-          user_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "sessions_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "auth_users"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       users: {
         Row: {
           created_at: string
           email: string | null
-          first_name: string | null
-          last_name: string | null
+          name: string
+          password: string | null
           user_id: string
         }
         Insert: {
           created_at?: string
           email?: string | null
-          first_name?: string | null
-          last_name?: string | null
+          name: string
+          password?: string | null
           user_id?: string
         }
         Update: {
           created_at?: string
           email?: string | null
-          first_name?: string | null
-          last_name?: string | null
+          name?: string
+          password?: string | null
           user_id?: string
         }
         Relationships: []

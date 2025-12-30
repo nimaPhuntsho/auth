@@ -14,4 +14,6 @@ export type RegisterType = z.infer<typeof RegisterSchema>;
 
 export const RegisterResponseSchema = z.object({
   error: z.string().nullable(),
+  userId: z.string().nullable(),
+  sessionId: z.string().nullable(),
 });
