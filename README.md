@@ -1,7 +1,8 @@
-# Auth server with Express + TS
+# Session-Based Authentication Server
 
-A monorepo combining an **Express** session-based auth API and a **Next.js** SSR frontend.  
-Built for learning and ready for production hardening.
+This project is a custom session-based authentication system built to understand how authentication works under the hood beyond framework-provided abstractions. Instead of relying on managed auth helpers, the system implements server-side sessions using Express, Redis, Supabase (PostgreSQL), and a Next.js frontend.
+
+The goal of the project is educational and architectural: to explore authentication trade-offs, session lifecycle management, and real-world backend concerns such as security, scalability, and correctness.
 
 # Project layout
 

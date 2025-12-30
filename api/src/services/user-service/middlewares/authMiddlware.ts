@@ -1,4 +1,4 @@
-import { redisClient } from "./../../../lib/redisClient";
+import { redisClient } from "../../../lib/redisClient";
 import { NextFunction, Request, Response } from "express";
 
 export async function authMiddleware(

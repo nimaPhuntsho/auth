@@ -1,12 +1,14 @@
-import { SessionType } from "./../services/schema";
+import { SessionType } from "../repository/schema";
 import { Request, Response } from "express";
 import { User, UserLoginSchema } from "./schema";
-import { createUser, login, retriveSession } from "../services/authService";
+import { createUser, login } from "../repository/authService";
 import { redisClient } from "../../../lib/redisClient";
+import { retriveSession } from "../redis/retrieveSession";
 
 export async function register(req: Request, res: Response) {
   const body = req.body;
   const parsedBody = User.safeParse(body);
+
   if (!parsedBody.success) {
     return res.status(400).json({
       error: parsedBody.error,
@@ -14,10 +16,12 @@ export async function register(req: Request, res: Response) {
   }
 
   try {
-    const { error, sessionId } = await createUser(parsedBody.data);
+    const { error, sessionId, userId } = await createUser(parsedBody.data);
     if (error) {
       return res.json({
         error: error,
+        sessionId: null,
+        userId: null,
       });
     }
     return res
@@ -29,15 +33,21 @@ export async function register(req: Request, res: Response) {
       .status(200)
       .json({
         error: null,
+        sessionId: sessionId,
+        userId: userId,
       });
   } catch (error) {
     if (error instanceof Error) {
       return res.json({
         error: error.message,
+        sessionId: null,
+        userId: null,
       });
     }
     return res.json({
       error: `Unknown error occured when creating a user`,
+      sessionId: null,
+      userId: null,
     });
   }
 }
@@ -48,6 +58,8 @@ export async function signIn(req: Request, res: Response) {
   if (!parsedBody.success) {
     return res.json({
       error: parsedBody.error,
+      sessionId: null,
+      userId: null,
     });
   }
   try {
@@ -57,6 +69,7 @@ export async function signIn(req: Request, res: Response) {
       return res.status(200).json({
         error: error,
         sessionId: null,
+        userId: null,
       });
 
     return res
@@ -71,18 +84,21 @@ export async function signIn(req: Request, res: Response) {
       .json({
         error: null,
         sessionId: sessionId,
+        userId: userId,
       });
   } catch (error) {
     if (error instanceof Error) {
       return res.json({
         error: error.message,
         sessionId: null,
+        userId: null,
       });
     }
 
     return res.status(400).json({
       error: `Unknown error occured when signing in a user`,
       userId: null,
+      sessionId: null,
     });
   }
 }
@@ -119,7 +135,6 @@ export async function getSession(req: Request, res: Response) {
   try {
     const sid = req.cookies.sid as string;
     const session = await retriveSession(sid);
-
     res.json({
       error: null,
       session: session,

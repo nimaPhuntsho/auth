@@ -1,5 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
-import { Database } from "../services/auth-service/database.types";
+import { Database } from "../services/database.types";
 
 // const url = process.env.SUPABASE_URL;
 // const key = process.env.SUPABASE_ANON_KEY;
@@ -11,6 +11,6 @@ import { Database } from "../services/auth-service/database.types";
 // }
 
 export const supabase = createClient<Database>(
-  "https://fwgpykjbnsmlztuduyyd.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ3Z3B5a2pibnNtbHp0dWR1eXlkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTIzMTAzOTQsImV4cCI6MjAyNzg4NjM5NH0.us0prv6WtMZBHWDgE3p6rS-ZskEtM-RNxuGfe5vyIfQ"
+  "https://txlesaddnfcsrliilcmp.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4bGVzYWRkbmZjc3JsaWlsY21wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjcwNzc4NDMsImV4cCI6MjA4MjY1Mzg0M30.HViTNrKCYF-BAwnZhMQdNsJUpETfIZ7ww22mDPascGI"
 );
